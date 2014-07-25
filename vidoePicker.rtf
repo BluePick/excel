@@ -1,0 +1,56 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf200
+{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red92\green38\blue153;\red100\green56\blue32;\red196\green26\blue22;
+\red170\green13\blue145;\red46\green13\blue110;\red28\green0\blue207;\red38\green71\blue75;\red0\green116\blue0;
+}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab529
+\pard\tx529\pardeftab529\pardirnatural
+
+\f0\fs22 \cf2 \CocoaLigature0 UIImagePickerControllerDelegate\cf0 ,\cf2 UINavigationControllerDelegate\cf0 \
+\cf3 #import \cf4 "MobileCoreServices/MobileCoreServices.h"\cf0 \
+\
+\
+\cf3 #pragma mark - UIBUTTON ACTION METHODS -\
+\cf0 \
+-(\cf5 IBAction\cf0 )btnAddVideoAction:(\cf5 id\cf0 )sender\
+\{\
+    \cf2 UIActionSheet\cf0  *action = [[\cf2 UIActionSheet\cf0  \cf6 alloc\cf0 ]\cf6 initWithTitle\cf0 :\cf4 @"Add Video"\cf0  \cf6 delegate\cf0 :\cf5 self\cf0  \cf6 cancelButtonTitle\cf0 :\cf4 @"cancel"\cf0  \cf6 destructiveButtonTitle\cf0 :\cf5 nil\cf0  \cf6 otherButtonTitles\cf0 :\cf4 @"Take a Video"\cf0 ,\cf4 @"Choose video from Library"\cf0 , \cf5 nil\cf0 ];\
+    [action \cf6 showInView\cf0 :\cf5 self\cf0 .\cf2 view\cf0 ];\
+\}\
+\
+- (\cf5 void\cf0 )actionSheet:(\cf2 UIActionSheet\cf0  *)actionSheet clickedButtonAtIndex:(\cf2 NSInteger\cf0 )buttonIndex\{\
+    \cf2 UIImagePickerController\cf0  *videoRecorder = [[\cf2 UIImagePickerController\cf0  \cf6 alloc\cf0 ]\cf6 init\cf0 ];\
+    \cf2 NSArray\cf0  *sourceTypes = [\cf2 UIImagePickerController\cf0  \cf6 availableMediaTypesForSourceType\cf0 :videoRecorder.\cf2 sourceType\cf0 ];\
+    videoRecorder.\cf2 mediaTypes\cf0  = [\cf2 NSArray\cf0  \cf6 arrayWithObject\cf0 :(\cf2 NSString\cf0 *)\cf2 kUTTypeMovie\cf0 ];\
+    videoRecorder.\cf2 videoQuality\cf0  = \cf6 UIImagePickerControllerQualityTypeMedium\cf0 ;\
+    videoRecorder.\cf2 videoMaximumDuration\cf0  = \cf7 30\cf0 ;\
+    videoRecorder.\cf2 allowsEditing\cf0  = \cf5 YES\cf0 ;\
+    videoRecorder.\cf2 delegate\cf0  = \cf5 self\cf0 ;\
+    \cf5 if\cf0  (buttonIndex) \{\
+        videoRecorder.\cf2 sourceType\cf0  = \cf6 UIImagePickerControllerSourceTypeSavedPhotosAlbum\cf0 ;\
+    \}\
+    \cf5 else\cf0 \{\
+        \cf5 if\cf0  ([\cf2 UIImagePickerController\cf0  \cf6 isSourceTypeAvailable\cf0 :\cf6 UIImagePickerControllerSourceTypeCamera\cf0 ]) \{\
+            \cf5 if\cf0  (![sourceTypes \cf6 containsObject\cf0 :(\cf2 NSString\cf0 *)\cf2 kUTTypeMovie\cf0 ] ) \{\
+                [\cf2 UIAlertView\cf0  \cf8 infoAlertWithMessage\cf0 :\cf4 @"Device Not Supported for video Recording."\cf0  \cf8 andTitle\cf0 :\cf3 ALERTNAME\cf0 ];\
+                \cf5 return\cf0 ;\
+            \}\
+            videoRecorder.\cf2 sourceType\cf0  = \cf6 UIImagePickerControllerSourceTypeCamera\cf0 ;\
+        \}\
+    \}\
+\
+    [\cf5 self\cf0  \cf6 presentViewController\cf0 :videoRecorder \cf6 animated\cf0 :\cf5 YES\cf0  \cf6 completion\cf0 :\cf5 nil\cf0 ];\
+\}\
+\
+-(\cf5 void\cf0 )imagePickerController:(\cf2 UIImagePickerController\cf0  *)picker didFinishPickingMediaWithInfo:(\cf2 NSDictionary\cf0  *)info \{\
+    [picker \cf6 dismissViewControllerAnimated\cf0 :\cf5 YES\cf0  \cf6 completion\cf0 :\cf5 nil\cf0 ];\
+    \cf2 NSString\cf0  *type = [info \cf6 objectForKey\cf0 :\cf2 UIImagePickerControllerMediaType\cf0 ];\
+    \cf5 if\cf0  ([type \cf6 isEqualToString\cf0 :(\cf2 NSString\cf0  *)\cf2 kUTTypeVideo\cf0 ] ||\
+        [type \cf6 isEqualToString\cf0 :(\cf2 NSString\cf0  *)\cf2 kUTTypeMovie\cf0 ]) \{ \cf9 // movie != video\cf0 \
+        \cf2 NSURL\cf0  *videoURL = [info \cf6 objectForKey\cf0 :\cf2 UIImagePickerControllerMediaURL\cf0 ];\
+        \cf2 NSData\cf0  *videoData = [\cf2 NSData\cf0  \cf6 dataWithContentsOfURL\cf0 :videoURL];\
+        \cf2 NSString\cf0  *videoStoragePath;\cf9 //Set your video storage path to this variable\cf0 \
+        [videoData \cf6 writeToFile\cf0 :videoStoragePath \cf6 atomically\cf0 :\cf5 YES\cf0 ];\
+    \}\
+\}}
